@@ -1,0 +1,4 @@
+﻿# 创建迁移脚本
+dotnet ef migrations add 1
+# 执行迁移脚本更新数据库
+dotnet ef database update

@@ -1,0 +1,43 @@
+﻿table tbody th, table tbody td {
+    background: none !important;
+    vertical-align: middle !important;
+}
+
+.panel-heading {
+    position: relative;
+    cursor: pointer;
+}
+
+.panel-icon {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+    .panel-icon.cur:after {
+        display: none;
+    }
+
+    .panel-icon:after {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 2px;
+        background-color: #333;
+        -webkit-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+    }
+
+    .panel-icon:before {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 2px;
+        background-color: #333;
+    }
+
+.panel-body {
+    display: none;
+}

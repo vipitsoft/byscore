@@ -1,0 +1,150 @@
+﻿@{
+    Layout = "_Layout1";
+    ViewData["Title"] = "Home Page";
+}
+<!-- bootstrap datepicker -->
+<link rel="stylesheet" href="~/lib/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Data Tables
+            <small>advanced tables</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Tables</a></li>
+            <li class="active">Data tables</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">日志列表</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">查询条件<span class="panel-icon"></span></div>
+                            <div class="panel-body">
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="form-group" style="margin-top:15px">
+                                        <label class="control-label col-sm-1" for="Level">等级</label>
+                                        <div class="col-sm-3">
+                                            <select name="Level" id="Level" class="form-control">
+                                                <option value="">全部</option>
+                                                <option value="Info">Info</option>
+                                                <option value="Debug">Debug</option>
+                                                <option value="Error">Error</option>
+                                            </select>
+                                        </div>
+                                        <label class="control-label col-sm-1" for="AddTime">日期</label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" name="AddTime" class="form-control pull-right " id="datepicker">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4" style="text-align:left;">
+                                            <button type="button" style="margin-left:50px" id="btn_query" class="btn btn-primary" onclick="Search()">查询</button>
+                                            <button type="button" style="margin-left:10px" id="btn_query" class="btn btn-warning" onclick="SearchReset()">重置</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div id="toolbar" class="btn-group">
+
+                        </div>
+
+                        <table id="ArbetTable"></table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+@section Scripts{
+    <!-- bootstrap datepicker -->
+    <script src="~/lib/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <link href="~/lib/toastr/toastr.css" rel="stylesheet" />
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/js/toastrconfig.js"></script>
+    <script src="~/lib/confirm/confirm.js"></script>
+    <script src="~/js/site.js"></script>
+    <script>
+              //Date picker
+    $('#datepicker').datepicker({
+        autoclose: true,
+        format: 'yyyy-mm-dd'
+    })
+     function applogFormatter(value, row, index) {//赋予的参数
+            return [
+                '<a class="btn" href="/applog/applogdetail?id='+row.id+'">详情</a>'
+            ].join('');
+        }
+
+        function levelFormatter(value, row, index) {//赋予的参数
+            if(value == "Info")
+            {
+                return "<small class='label bg-blue'>"+value+"</small>";
+            }else if(value == "Debug"){
+                return "<small class='label bg-green'>"+value+"</small>";
+            }else if(value == "Error"){
+                return "<small class='label bg-red'>"+value+"</small>";
+            }
+        }
+$(function () {
+     //1.初始化Table
+     var dataconfig = {
+         tableid:"#ArbetTable", //table的Id
+         url: "/applog/GetAppLogList", //获取列表的url
+         columns: [
+            {checkbox: true},
+            {
+                field: 'id',
+                title: '序号'
+            },  {
+                field: 'level',
+                title: '级别',
+                formatter: levelFormatter
+            }, {
+                field: 'logged',
+                title: '日期',
+                formatter: dateFormatter //自定义方法，格式化日期
+            },
+            {
+                field: 'message',
+                title: '消息'
+            },
+            {
+                field: 'exception',
+                title: '异常信息',
+                width: 200
+            },
+            {
+                field: 'operate',
+                title: '操作',
+                formatter: applogFormatter //自定义方法，添加操作按钮
+            },
+            ]
+     };
+     var oTable = new TableInit(dataconfig);
+     oTable.Init();
+ });
+
+    </script>
+}

@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  byscore.ui:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000"
+
+  byscore.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "9999"
+

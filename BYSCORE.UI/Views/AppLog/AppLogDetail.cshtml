@@ -1,0 +1,65 @@
+﻿@model ApplicationLog
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            General Form Elements
+            <small>Preview</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Forms</a></li>
+            <li class="active">General Elements</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">日志详情</h3>
+                    </div>
+                    <!-- /.box-header -->
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="Name">应用名：</label>
+                            <label>@Model.Application</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="Price">时间：</label>
+                            <label>@Model.Logged.ToString("yyyy-MM-dd HH:mm:ss")</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="Discout">等级：</label>
+                            <label>@Model.Level</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="Description">消息：</label>
+                            <label>@Model.Message</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="Description">异常信息：</label>
+                            <label>@Model.Exception</label>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <!-- /.box -->
+
+            </div>
+            <!--/.col (left) -->
+
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
