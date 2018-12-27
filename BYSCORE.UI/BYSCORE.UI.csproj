@@ -22,7 +22,6 @@
     <Folder Include="Views\AppLog\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BYSCORE.Common\BYSCORE.Common.csproj" />
     <ProjectReference Include="..\BYSCORE.Entity\BYSCORE.Entity.csproj" />
   </ItemGroup>
   <ItemGroup>
