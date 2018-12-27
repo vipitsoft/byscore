@@ -6902,4 +6902,9 @@
     <None Include="wwwroot\lib\bower_components\select2\tests\vendor\qunit-1.23.1.js" />
     <None Include="wwwroot\lib\bower_components\select2\vendor\jquery-2.1.0.js" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
