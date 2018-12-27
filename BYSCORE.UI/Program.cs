@@ -21,7 +21,7 @@ namespace BYSCORE.UI
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls("http://*:5000")
+                .UseUrls("http://*:80")
                 .UseIISIntegration()
                 .UseStartup<Startup>();
     }
