@@ -1,0 +1,9 @@
+BYSCORE.API/bin
+BYSCORE.API/obj
+BYSCORE.Common/bin
+BYSCORE.Common/obj
+BYSCORE.Dao/bin
+BYSCORE.Dao/obj
+BYSCORE.Entity/bin
+BYSCORE.Entity/obj
+BYSCORE.UI/obj
