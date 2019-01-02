@@ -22,6 +22,7 @@
     <Folder Include="Views\AppLog\" />
     <Folder Include="wwwroot\lib\bower-components\" />
     <Folder Include="wwwroot\lib\bower-components\ckeditor\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BYSCORE.Entity\BYSCORE.Entity.csproj" />

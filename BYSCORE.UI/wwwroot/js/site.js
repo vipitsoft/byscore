@@ -1,8 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-/**************************************时间格式化处理************************************/
+﻿/**************************************时间格式化处理************************************/
 function dateFtt(fmt,date)   
 { //author: meizz   
   var o = {   
@@ -23,27 +19,26 @@ function dateFtt(fmt,date)
 }
 
 //自定义函数处理queryParams的批量增加
-        $.fn.serializeJsonObject = function () {
-            var json = {};
-            var form = this.serializeArray();
-            $.each(form, function () {
-                if (json[this.name]) {
-                    if (!json[this.name].push) {
-                        json[this.name] = [json[this.name]];
-                    }
-                    json[this.name].push();
-                } else {
-                    json[this.name] = this.value || '';
-                }
-            });
-            return json;
+$.fn.serializeJsonObject = function () {
+    var json = {};
+    var form = this.serializeArray();
+    $.each(form, function () {
+        if (json[this.name]) {
+            if (!json[this.name].push) {
+                json[this.name] = [json[this.name]];
+            }
+            json[this.name].push();
+        } else {
+            json[this.name] = this.value || '';
         }
+    });
+    return json;
+}
 
-
- function dateFormatter(value, row, index) {//赋予的参数
-             var crtTime = new Date(value);
-             return top.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime);//直接调用公共JS里面的时间类处理的办法
-        }
+function dateFormatter(value, row, index) {//赋予的参数
+         var crtTime = new Date(value);
+         return top.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime);//直接调用公共JS里面的时间类处理的办法
+    }
 
 var TableInit = function (dataconfig) {
     var oTableInit = new Object();
