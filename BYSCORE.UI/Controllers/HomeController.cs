@@ -54,6 +54,7 @@ namespace BYSCORE.UI.Controllers
         {
             try
             {
+                _logService.Debug(new LogQuery { Message = "添加产品参数", Exception = null, Obj = product });
                 var ret = await _productService.AddProduct(product);
 
                 return Json(new { isadd = ret });

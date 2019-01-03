@@ -28,6 +28,12 @@
     <Compile Remove="Common\NLogHelper.cs" />
     <Compile Remove="Migrations\20181218042250_2.Designer.cs" />
     <Compile Remove="Controllers\ApplicationLog.cs" />
+    <Compile Remove="Migrations\20190102084931_1.cs" />
+    <Compile Remove="Migrations\CoreDbContextModelSnapshot.cs" />
+    <Compile Remove="Migrations\20190103031550_1.cs" />
+    <Compile Remove="Migrations\CoreDbContextModelSnapshot.cs" />
+    <Compile Remove="Migrations\20190103031917_1.cs" />
+    <Compile Remove="Migrations\CoreDbContextModelSnapshot.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="logfiles\internal-nlog.txt" />
