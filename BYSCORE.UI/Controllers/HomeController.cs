@@ -39,7 +39,7 @@ namespace BYSCORE.UI.Controllers
             }
             catch (Exception ex)
             {
-                _logService.Error(new LogQuery { Message = "获取产品列表失败！", Exception = ex, Obj = query });
+                _logService.Error(string.Format("获取产品列表失败！query = 【{0}】", query.ToJSON()), ex);
                 return Json(new { total = 0, data = "" });
             }
         }
@@ -54,14 +54,14 @@ namespace BYSCORE.UI.Controllers
         {
             try
             {
-                _logService.Debug(new LogQuery { Message = "添加产品参数", Exception = null, Obj = product });
+                _logService.Debug(string.Format("添加产品参数！product = 【{0}】", product.ToJSON()));
                 var ret = await _productService.AddProduct(product);
 
                 return Json(new { isadd = ret });
             }
             catch (Exception ex)
             {
-                _logService.Error(new LogQuery { Message = "添加产品失败！", Exception = ex, Obj = product });
+                _logService.Error(string.Format("添加产品失败！product = 【{0}】", product.ToJSON()), ex);
                 return Json(new { isadd = false });
             }
         }
@@ -84,7 +84,7 @@ namespace BYSCORE.UI.Controllers
             }
             catch (Exception ex)
             {
-                _logService.Error(new LogQuery { Message = "编辑产品失败！", Exception = ex, Obj = product });
+                _logService.Error(string.Format("编辑产品失败！product = 【{0}】", product.ToJSON()), ex);
                 return Json(new { isedit = false });
             }
         }
@@ -99,7 +99,7 @@ namespace BYSCORE.UI.Controllers
             }
             catch (Exception ex)
             {
-                _logService.Error(new LogQuery { Message = "编辑产品失败！", Exception = ex, Obj = id });
+                _logService.Error(string.Format("编辑产品失败！id=【{0}】", id), ex);
                 return Json(new { isdel = false });
             }
         }
@@ -116,7 +116,7 @@ namespace BYSCORE.UI.Controllers
             }
             catch (Exception ex)
             {
-                _logService.Error(new LogQuery { Message = "导出excel失败！", Exception = ex, Obj = null });
+                _logService.Error("导出excel失败！", ex);
                 return null;
             }
         }

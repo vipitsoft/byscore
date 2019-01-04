@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BYSCORE.Common;
 using BYSCORE.Entity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +35,7 @@ namespace BYSCORE.UI.Controllers
             }
             catch (Exception ex)
             {
-                _logService.Error(new LogQuery { Message = "获取异常日志列表失败！", Exception = ex, Obj = query });
+                _logService.Error(string.Format("获取异常日志列表失败！query = 【{0}】", query.ToJSON()), ex);
                 return Json(new { total = 0, data = "" });
             }
         }

@@ -48,12 +48,11 @@ namespace BYSCORE.API
             {
                 app.UseHsts();
             }
-            // 使用NLog座位日志记录工具
+            // 使用NLog作为日志记录工具
             loggerFactory.AddNLog();
             // 引入Nlog配置文件
             env.ConfigureNLog("NLog.config");
-            //app.AddNLogWeb();
-            //LogManager.Configuration.Variables["connectionString"] = Configuration.GetConnectionString("Mysql");
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }

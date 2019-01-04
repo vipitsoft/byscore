@@ -16,7 +16,7 @@ namespace BYSCORE.API.Controllers
         [HttpPost, Route("debug")]
         public void Debug([FromBody]LogQuery logQuery)
         {
-            nlog.Debug(logQuery.Message, logQuery.Obj);
+            nlog.Debug(logQuery.Message);
         }
 
         [HttpPost, Route("info")]
@@ -28,7 +28,7 @@ namespace BYSCORE.API.Controllers
         [HttpPost, Route("error")]
         public void Error([FromBody]LogQuery logQuery)
         {
-            nlog.Error(logQuery.Exception, logQuery.Message, logQuery.Obj);
+            nlog.Error(logQuery.Exception, logQuery.Message);
         }
     }
 }

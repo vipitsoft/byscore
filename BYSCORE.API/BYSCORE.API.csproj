@@ -34,6 +34,7 @@
     <Compile Remove="Migrations\CoreDbContextModelSnapshot.cs" />
     <Compile Remove="Migrations\20190103031917_1.cs" />
     <Compile Remove="Migrations\CoreDbContextModelSnapshot.cs" />
+    <Compile Remove="Migrations\20190103064940_1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="logfiles\internal-nlog.txt" />

@@ -8,6 +8,7 @@ namespace BYSCORE.Entity
     {
         public void Configure(EntityTypeBuilder<ApplicationLog> builder)
         {
+
             builder.ToTable("applicationlog");
             builder.HasKey(t => t.Id);
 
@@ -18,6 +19,7 @@ namespace BYSCORE.Entity
             builder.Property(t => t.Message);
             builder.Property(t => t.Logger);
             builder.Property(t => t.Exception);
+            builder.Property(t => t.Text).HasColumnType("text");
         }
     }
 }

@@ -17,7 +17,12 @@ namespace BYSCORE.UI
             baseUrl = model.ApiBaseUrl;
         }
 
-        internal void Info(LogQuery logQuery)
+        internal void Info(string message)
+        {
+            Info(new LogQuery { Message = message, Exception = null });
+        }
+
+        private void Info(LogQuery logQuery)
         {
             Task.Factory.StartNew(() =>
             {
@@ -25,7 +30,12 @@ namespace BYSCORE.UI
             });
         }
 
-        internal void Error(LogQuery logQuery)
+        internal void Error(string message, Exception exception)
+        {
+            Error(new LogQuery { Message = message, Exception = exception });
+        }
+
+        private void Error(LogQuery logQuery)
         {
             Task.Factory.StartNew(() =>
             {
@@ -33,7 +43,12 @@ namespace BYSCORE.UI
             });
         }
 
-        internal void Debug(LogQuery logQuery)
+        internal void Debug(string message)
+        {
+            Debug(new LogQuery { Message = message, Exception = null });
+        }
+
+        private void Debug(LogQuery logQuery)
         {
             Task.Factory.StartNew(() =>
             {
