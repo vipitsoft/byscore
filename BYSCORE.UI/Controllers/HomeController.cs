@@ -104,6 +104,10 @@ namespace BYSCORE.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// 导出excel
+        /// </summary>
+        /// <returns>The excel.</returns>
         public async Task<IActionResult> ExportExcel()
         {
             try

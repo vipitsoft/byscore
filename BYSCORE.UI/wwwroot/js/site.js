@@ -70,6 +70,7 @@ var TableInit = function (dataconfig) {
             showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
             cardView: false,                    //是否显示详细视图
             detailView: false,                   //是否显示父子表
+            paginationLoop:false,                //是否启用无限循环分页
             queryParamsType:'limit',
             columns: dataconfig.columns,
             rowStyle: function (row, index) {
@@ -124,3 +125,4 @@ function SearchReset(){
         }
     })
 }
+

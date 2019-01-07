@@ -19,7 +19,6 @@ namespace BYSCORE.Entity
             builder.Property(t => t.Message);
             builder.Property(t => t.Logger);
             builder.Property(t => t.Exception);
-            builder.Property(t => t.Text).HasColumnType("text");
         }
     }
 }

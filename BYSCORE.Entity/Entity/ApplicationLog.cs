@@ -29,8 +29,5 @@ namespace BYSCORE.Entity
 
         [Column("exception"), StringLength(512)]
         public string Exception { get; set; }
-
-        [Column("text")]
-        public string Text { get; set; }
     }
 }

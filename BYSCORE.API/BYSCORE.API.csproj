@@ -38,6 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="logfiles\internal-nlog.txt" />
+    <None Remove="nlog-internal.log" />
+    <None Remove="nlog-internal.log" />
+    <None Remove="nlog-internal.log" />
+    <None Remove="nlog\nlog-internal.log" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="nlog.config" />
