@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BYSCORE.UI
 {
-    public class DIServiceRegister
+    public static class DIServiceRegister
     {
-        public void DIRegister(IServiceCollection services)
+        public static void DIRegister(IServiceCollection services)
         {
             services.AddTransient<ProductService>();
             services.AddTransient<LogService>();

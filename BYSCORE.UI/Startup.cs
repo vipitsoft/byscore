@@ -36,11 +36,14 @@ namespace BYSCORE.UI
             services.AddHttpClient<WebApiHelper>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddOptions();
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            DIServiceRegister dIServiceRegister = new DIServiceRegister();
-            dIServiceRegister.DIRegister(services);
+
+            // service注入
+            DIServiceRegister.DIRegister(services);
+
             services.AddSession();
         }
 

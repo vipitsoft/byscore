@@ -6,10 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="Class1.cs" />
+    <Compile Remove="ExcelForAspose.cs" />
+    <Compile Remove="ExcelUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="lz4net" Version="1.0.15.93" />
+    <PackageReference Include="NPOI" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Consts\" />
