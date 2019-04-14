@@ -1,0 +1,185 @@
+﻿@{
+    Layout = "_Layout1";
+    ViewData["Title"] = "编辑角色";
+}
+@model Role
+<link rel="stylesheet" href="~/lib/treeview/css/bootstrap-treeview.min.css" />
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            编辑角色
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="/home/index"><i class="fa fa-home"></i> 首页</a></li>
+            <li><a href="/home/productlist">角色管理</a></li>
+            <li class="active">编辑角色</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-8">
+                <!-- general form elements -->
+                <div class="box box-primary">
+
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form role="form" id="roleEdit">
+                        <input type="hidden" id="MenuIds" name="MenuIds" />
+                        <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                        <input type="hidden" id="Code" name="Code" value="@Model.Code" />
+                        <input type="hidden" id="CreatedTime" name="CreatedTime" value="@Model.CreatedTime" />
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="CName">角色名称</label>
+                                <input type="text" class="form-control" name="CName" id="CName" value="@Model.CName" placeholder="角色名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="EName">角色编码</label>
+                                <input type="text" class="form-control" name="EName" id="EName" value="@Model.EName" placeholder="角色编码">
+                            </div>
+                            <div class="form-group">
+                                <label for="Description">角色描述</label>
+                                <textarea class="form-control" name="Description" id="Description" placeholder="角色描述" rows="3">@Model.Description</textarea>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary" id="EditRole">保存</button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="/sys/rolemanage" class="btn btn-default">取消</a>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.box -->
+
+            </div>
+            <div class="col-xs-4">
+                <div class="box box-primary">
+                    <div id="tree"></div>
+                </div>
+            </div>
+            <!--/.col (left) -->
+
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+@section Scripts{
+    <script src="~/lib/treeview/js/bootstrap-treeview.min.js"></script>
+    <script src="~/lib/bootstrap-validator/dist/js/bootstrapValidator.min.js"></script>
+    <script src="~/lib/bootstrap-validator/dist/js/language/zh_CN.js"></script>
+    <link href="~/lib/bootstrap-validator/dist/css/bootstrapValidator.min.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.form.js"></script>
+    <link href="~/lib/toastr/toastr.css" rel="stylesheet" />
+    <script src="~/lib/toastr/toastr.min.js"></script>
+    <script src="~/js/toastrconfig.js"></script>
+    <script>
+$(function () {
+            $('form').bootstrapValidator({
+            message: 'This value is not valid',
+                 feedbackIcons: {
+                            valid: 'glyphicon glyphicon-ok',
+                            invalid: 'glyphicon glyphicon-remove',
+                            validating: 'glyphicon glyphicon-refresh'
+                           },
+                fields: {
+                    CName: {
+                        message: '角色名验证失败！',
+                        validators: {
+                            notEmpty: {
+                                message: '角色名不能为空！'
+                            }
+                        }
+                    },
+                    EName: {
+                        validators: {
+                            notEmpty: {
+                                message: '角色编码不能为空！'
+                            }
+                        }
+                    },
+                    Description: {
+                        validators: {
+                            notEmpty: {
+                                message: '角色介绍不能为空！'
+                            }
+                        }
+                    }
+                }
+            });
+            $("#EditRole").on("click", function(){
+            var treecheck = $('#tree').treeview('getChecked');
+            var ids = "";
+            for(var i=0;i<treecheck.length;i++){
+                ids += treecheck[i].id +",";
+            }
+            $("#MenuIds").val(ids);
+            var opt = {
+                    type: "POST",
+                    dataType: "json",
+                    url: "/sys/RoleEdit",
+                    success: function (data) {
+                        if (data.isedit == true) {
+                            toastr.success("保存成功！");
+                            setTimeout(function(){ window.location.reload(); }, 3000);
+                        }
+                        else
+                        {
+                            toastr.error("保存失败！");
+                            $("#EditRole").removeAttr("disabled");
+                        }
+                    },
+                    error: function (e) {
+                            alert(e.responseText);
+                            $("#EditRole").removeAttr("disabled");
+                            },
+
+                    };
+                 $("#roleEdit").ajaxForm(opt);
+            })
+
+        var roleId = $("#Id").val();
+        $.ajax({
+            type: "Post",
+            url: "/sys/GetMenuList",
+            data:{roleId:roleId},
+            dataType: "json",
+            success: function (result) {
+                if(result.isGet == false){
+                    alert(result.msg);
+                    return;
+                }
+                $('#tree').treeview({
+                    data: result.data,         // 数据源
+                    levels: 2,
+                    showCheckbox: true,   //是否显示复选框
+                    highlightSelected: true,    //是否高亮选中
+                    //nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标
+                    //nodeIcon: 'glyphicon glyphicon-globe',
+                    emptyIcon: '',    //没有子节点的节点图标
+                    multiSelect: false,    //多选
+                    showTags: true,
+                    onNodeChecked: function (event,data) {
+                        //alert(data);
+                    },
+                    onNodeSelected: function (event, data) {
+
+                    }
+                });
+            },
+            error: function (e) {
+                            alert(e.responseText);
+                            },
+        });
+
+        });</script>
+}

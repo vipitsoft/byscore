@@ -1,22 +1,63 @@
 ﻿<aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
+        <a href="/home/userinfo">
+            <div class="user-panel">
+                @{
+                    User user = ViewBag.UserInfo as User;
+                    if (user != null)
+                    {
 
+                        <div class="pull-left image">
+
+                            <img src="@user.HeadImg" class="img-circle" alt="User Image">
+
+                        </div>
+
+                        <div class="pull-left info">
+                            <p>@user.UserName</p>
+                            <label>@user.Role.CName</label>
+                            @*<a href="#"><i class="fa fa-circle text-success"></i> 在线</a>*@
+                        </div>
+                    }
+                }
+
+            </div>
+        </a>
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
-            <li><a href="~/home/index"><i class="fa fa-home"></i> <span>首页</span></a></li>
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-dashboard"></i> <span>产品管理</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="~/home/productlist"><i class="fa fa-circle-o"></i> 产品列表</a></li>
-                </ul>
-            </li>
-            <li><a href="~/applog/index"><i class="fa fa-book"></i> <span>日志</span></a></li>
+            <li class="header">主导航</li>
+            @{
+                List<Menu> menus = cacheService.Get<List<Menu>>(user.Code + "-" + SysConsts.USERMENULIST);
+                var pmenus = menus.Where(t => t.ParentId == 0).ToList();
+                foreach (var item in pmenus)
+                {
+                    var cmenus = menus.Where(t => t.ParentId == item.Id).ToList();
+                    if (cmenus.Count == 0)
+                    {
+                        <li><a href="@item.Url"><i class="fa @item.Icon"></i> <span>@item.CName</span></a></li>
+                    }
+                    else
+                    {
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa @item.Icon"></i> <span>@item.CName</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                @foreach (var item1 in cmenus)
+                                {
+                                    <li><a href="@item1.Url"><i class="fa @item1.Icon"></i> @item1.CName</a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                }
+
+            }
+
         </ul>
     </section>
     <!-- /.sidebar -->

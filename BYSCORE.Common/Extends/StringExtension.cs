@@ -1053,8 +1053,10 @@ namespace BYSCORE.Common
                                     string dateTimeFormat = null, int? typeNameHandling = null, bool ignoreNullValue = true, bool isEscapeHtml = false)
         {
             var format = isNeedFormat ? Formatting.Indented : Formatting.None;
-            var settings = new JsonSerializerSettings();
-            settings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;//兼容<=4.5版本，默认序列化成微软的datetime json格式，e.g. "\/Date(1198908717056+0800)\/"，如果要输出ISO标准时间，可以通过dateTimeFormat进行设置。
+            var settings = new JsonSerializerSettings
+            {
+                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat//兼容<=4.5版本，默认序列化成微软的datetime json格式，e.g. "\/Date(1198908717056+0800)\/"，如果要输出ISO标准时间，可以通过dateTimeFormat进行设置。
+            };
 
             if (isCanCyclicReference)
             {

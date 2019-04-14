@@ -53,7 +53,7 @@ namespace BYSCORE.API
             // 引入Nlog配置文件
             env.ConfigureNLog("NLog.config");
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseMvc();
         }
     }

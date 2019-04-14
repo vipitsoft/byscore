@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -64,6 +65,60 @@ namespace BYSCORE.UI
             return buffer;
         }
 
+
+        public static MemoryStream ToExcel(DataTable exportTable, string templetPath)
+        {
+            XSSFWorkbook wk = null;
+            using (FileStream fs = File.Open(templetPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                //把xls文件读入workbook变量里，之后就可以关闭了
+                wk = new XSSFWorkbook(fs);
+                fs.Close();
+            }
+            XSSFSheet sheet1 = (XSSFSheet)wk.GetSheetAt(0);
+            if (exportTable != null)
+            {
+                int nRow = 1;//开始插入的行（第三行）
+                string nextFirstTxt = string.Empty;
+                ICellStyle style1 = SetCellStyle(wk, null, HorizontalAlignment.Center);
+                for (int i = 0; i < exportTable.Rows.Count; i++)
+                {
+                    IRow row = sheet1.CreateRow(nRow);//创建行
+                    for (int j = 0; j < exportTable.Columns.Count; j++)
+                    {
+                        //创建列并赋值
+                        row.CreateCell(j).SetCellValue(exportTable.Rows[i][j].ToString());
+                        //设置Excel行的样式（带边框）
+                        row.GetCell(j).CellStyle = style1;
+                    }
+                    nRow++;
+                }
+            }
+
+            MemoryStream memoryStream = new MemoryStream();
+            wk.Write(memoryStream);
+            memoryStream.Position = 0;
+            return memoryStream;
+        }
+
+        /// <summary>
+        /// 给Excel添加边框
+        /// </summary>
+        public static ICellStyle SetCellStyle(XSSFWorkbook hssfworkbook, IFont font, HorizontalAlignment ha)
+        {
+            ICellStyle cellstyle = hssfworkbook.CreateCellStyle();
+            cellstyle.Alignment = ha;
+            if (font != null)
+            {
+                cellstyle.SetFont(font);
+            }
+            //有边框
+            cellstyle.BorderBottom = BorderStyle.Thin;
+            cellstyle.BorderLeft = BorderStyle.Thin;
+            cellstyle.BorderRight = BorderStyle.Thin;
+            cellstyle.BorderTop = BorderStyle.Thin;
+            return cellstyle;
+        }
 
         /// <summary>
         /// 导入Excel

@@ -9,7 +9,7 @@ namespace BYSCORE.UI
     public class LogService
     {
         private readonly IOptions<AppSettings> _settings;
-        private string baseUrl;
+        private readonly string baseUrl;
         public LogService(IOptions<AppSettings> settings)
         {
             _settings = settings;

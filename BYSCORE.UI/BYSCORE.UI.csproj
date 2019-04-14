@@ -24,6 +24,7 @@
     <Folder Include="wwwroot\lib\bower-components\ckeditor\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="Models\Excel\" />
+    <Folder Include="Filter\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BYSCORE.Entity\BYSCORE.Entity.csproj" />
@@ -35,5 +36,13 @@
     <None Update="Dockerfile">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Views\ConfigInfo\JobTypeManage.cshtml" />
+    <Content Remove="Views\ConfigInfo\ResumeSource.cshtml" />
+    <Content Remove="Views\ConfigInfo\Index.cshtml" />
+    <Content Remove="Views\ConfigInfo\ResumeStatusManage.cshtml" />
+    <Content Remove="Views\ConfigInfo\AreaManage.cshtml" />
+    <Content Remove="Views\Sys\UserAdd.cshtml" />
   </ItemGroup>
 </Project>

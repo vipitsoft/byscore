@@ -12,52 +12,63 @@ using BYSCORE.Common;
 using BYSCORE.UI.Common;
 using Microsoft.Extensions.Options;
 using BYSCORE.Entity;
+using NLog;
 
 namespace BYSCORE.UI
 {
     public class WebApiHelper
     {
-        private readonly HttpClient client;
+        private readonly Logger nlog = LogManager.GetCurrentClassLogger(); //获得日志实;
+        //private readonly HttpClient client;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _accessor;
         private readonly IOptions<AppSettings> _settings;
-        public WebApiHelper(HttpClient httpClient, IHttpContextAccessor accessor, IOptions<AppSettings> settings)
+        private readonly AppSettings appSettings;
+        public WebApiHelper(IHttpContextAccessor accessor, IOptions<AppSettings> settings, IHttpClientFactory httpClientFactory)
         {
             _settings = settings;
-            AppSettings model = _settings.Value;
-            httpClient.BaseAddress = new Uri(model.ApiBaseUrl);
-            client = httpClient;
+            appSettings = _settings.Value;
+            _httpClientFactory = httpClientFactory;
+            //client = _httpClientFactory.CreateClient();
+            //client.BaseAddress = new Uri(model.ApiBaseUrl);
+            //client = httpClient;
             _accessor = accessor;
         }
 
         public async Task<T> DeleteAsync<T>(string requestUri)
         {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             BuildLogHeaders(client);
             var response = await client.DeleteAsync(requestUri);
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsAsync<T>();
 
             }
 
             VerifyStatus(response);
-            return default(T);            
+            return default(T);
         }
 
         public async Task<string> GetString(string url)
         {
-            
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
             return await client.GetStringAsync(url);
 
         }
 
-        public async Task<T> GetAsync<T>( string requestUri)
+        public async Task<T> GetAsync<T>(string requestUri)
         {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.Timeout = new TimeSpan(10, 0, 0);
+            client.Timeout = new TimeSpan(0, 10, 0);
             BuildLogHeaders(client);
             var response = await client.GetAsync(requestUri);
             if (response.IsSuccessStatusCode)
@@ -72,7 +83,8 @@ namespace BYSCORE.UI
 
         public async Task<string> GetAsync(string requestUri)
         {
-
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             BuildLogHeaders(client);
@@ -81,7 +93,7 @@ namespace BYSCORE.UI
             {
                 return await response.Content.ReadAsStringAsync();
             }
-          
+
             VerifyStatus(response);
             return null;
 
@@ -89,7 +101,8 @@ namespace BYSCORE.UI
 
         public async Task<T> PostAsync<T>(string requestUri, object data)
         {
-
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             BuildLogHeaders(client);
@@ -102,10 +115,11 @@ namespace BYSCORE.UI
             VerifyStatus(response);
             return default(T);
         }
-       
-        public  async Task<string> PostAsync(string requestUri, object data)
-        {
 
+        public async Task<string> PostAsync(string requestUri, object data)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var response = await client.PostAsJsonAsync(requestUri, data);
@@ -113,14 +127,15 @@ namespace BYSCORE.UI
             {
                 return await response.Content.ReadAsStringAsync();
             }
-         
+
             VerifyStatus(response);
             return null;
         }
 
-        public  async Task<T> PostFormAsync<T>(string requestUri, object data)
+        public async Task<T> PostFormAsync<T>(string requestUri, object data)
         {
-            
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             //var content = new FormUrlEncodedContent(data);
@@ -133,11 +148,12 @@ namespace BYSCORE.UI
             VerifyStatus(response);
             return default(T);
         }
-       
+
 
         public async Task<T> PutAsync<T>(string requestUri, object data)
         {
-
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(appSettings.ApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             BuildLogHeaders(client);
@@ -151,7 +167,7 @@ namespace BYSCORE.UI
             return default(T);
         }
 
-        private  void VerifyStatus(HttpResponseMessage response)
+        private void VerifyStatus(HttpResponseMessage response)
         {
             string msg = response.Content.ReadAsStringAsync().Result;
             //ServiceException exception = new ServiceException(msg);
@@ -160,16 +176,16 @@ namespace BYSCORE.UI
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    //WebLog.Error(new UnauthorizedAccessException(response.ReasonPhrase, new Exception(response.RequestMessage.ToString())));
+                    nlog.Error("访问出错！", response.Content);
                 }
                 else
                 {
-                    //WebLog.Error(new HttpException((int)response.StatusCode, response.ReasonPhrase, new Exception(exception.SimplifyMessage + response.RequestMessage.ToString())));
+                    nlog.Error("访问出错！", response.Content);
                 }
             }
         }
 
-        private  void BuildLogHeaders(HttpClient httpClient)
+        private void BuildLogHeaders(HttpClient httpClient)
         {
             //try
             //{
@@ -209,6 +225,6 @@ namespace BYSCORE.UI
             return new AuthenticationHeaderValue("Basic", base64);
         }
 
-       
+
     }
 }

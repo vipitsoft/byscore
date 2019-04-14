@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BYSCORE.UI.Controllers
 {
-    public class AppLogController : Controller
+    public class AppLogController : BaseController
     {
-        private AppLogService _applogService;
+        private readonly AppLogService _applogService;
         private readonly LogService _logService;
         public AppLogController(AppLogService appLogService, LogService logService)
         {

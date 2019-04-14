@@ -29,8 +29,10 @@ namespace BYSCORE.Dao
 
             if (query.AddTime.IsNotNullOrEmpty())
             {
-                DateTime time = query.AddTime.ToDateTime();
-                list = list.Where(w => w.Logged >= time && w.Logged <= time);
+                DateTime tempTime = query.AddTime.ToDateTime();
+                DateTime stime = new DateTime(tempTime.Year, tempTime.Month, tempTime.Day, 0, 0, 0);
+                DateTime etime = new DateTime(tempTime.Year, tempTime.Month, tempTime.Day, 23, 59, 59);
+                list = list.Where(w => w.Logged >= stime && w.Logged <= etime);
             }
             list = list.OrderByDescending(t => t.Logged).Paging(out int totalCount, query.Page, query.PageSize);
 

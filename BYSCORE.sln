@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BYSCORE.Entity", "BYSCORE.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BYSCORE.Common", "BYSCORE.Common\BYSCORE.Common.csproj", "{110293AF-287B-4D8D-B852-C10F3C162B09}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{3EE504FD-BE65-4C74-ABAB-85F83B907652}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,9 +37,5 @@ Global
 		{110293AF-287B-4D8D-B852-C10F3C162B09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{110293AF-287B-4D8D-B852-C10F3C162B09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{110293AF-287B-4D8D-B852-C10F3C162B09}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EE504FD-BE65-4C74-ABAB-85F83B907652}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EE504FD-BE65-4C74-ABAB-85F83B907652}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EE504FD-BE65-4C74-ABAB-85F83B907652}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EE504FD-BE65-4C74-ABAB-85F83B907652}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -11,6 +11,9 @@ namespace BYSCORE.Entity
 
         public string AddTime { get; set; }
 
+        public string KeyWorld { get; set; }
+
+        public int ConfigType { get; set; }
         /// <summary>
         /// 日志等级
         /// </summary>

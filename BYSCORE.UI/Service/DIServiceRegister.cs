@@ -7,9 +7,14 @@ namespace BYSCORE.UI
     {
         public static void DIRegister(IServiceCollection services)
         {
-            services.AddTransient<ProductService>();
             services.AddTransient<LogService>();
             services.AddTransient<AppLogService>();
+            services.AddTransient<ConfigInfoService>();
+            services.AddTransient<MenuService>();
+            services.AddTransient<RoleService>();
+            services.AddTransient<RoleMenuService>();
+            services.AddTransient<UserMenuService>();
+            services.AddTransient<UserService>();
         }
     }
 }

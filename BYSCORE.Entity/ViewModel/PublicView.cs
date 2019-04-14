@@ -8,8 +8,18 @@ namespace BYSCORE.Entity
     {
         public int TotalCount { get; set; }
 
-        public IEnumerable<Product> ProductList { get; set; }
-
         public IEnumerable<ApplicationLog> ApplicationLogList { get; set; }
+
+        public IEnumerable<ConfigInfo> ConfigInfoList { get; set; }
+
+        public IEnumerable<Menu> MenuList { get; set; }
+
+        public IEnumerable<Role> RoleList { get; set; }
+
+        public IEnumerable<RoleMenu> RoleMenuList { get; set; }
+
+        public IEnumerable<User> UserList { get; set; }
+
+        public IEnumerable<UserMenu> UserMenuList { get; set; }
     }
 }
