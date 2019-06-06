@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using NLog;
 
 namespace BYSCORE.UI
 {
@@ -20,11 +21,14 @@ namespace BYSCORE.UI
         private readonly ICacheService _cacheService;
         private readonly MenuService _menuService;
         private readonly UserService _userService;
-        public AuthFilter(ICacheService cacheService, MenuService menuService, UserService userService)
+        private readonly RoleService _roleService;
+        private readonly Logger nlog = LogManager.GetCurrentClassLogger(); //获得日志实;
+        public AuthFilter(ICacheService cacheService, MenuService menuService, UserService userService, RoleService roleService)
         {
             _cacheService = cacheService;
             _menuService = menuService;
             _userService = userService;
+            _roleService = roleService;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -38,15 +42,11 @@ namespace BYSCORE.UI
                     var claims = context.HttpContext.User.Claims;
                     // 获取用户id
                     var sid = claims.FirstOrDefault(t => t.Type == ClaimTypes.Sid).Value;
-
+                    User user = _userService.Get(sid).Result; ;
                     if (!_cacheService.Exists(sid + "-" + SysConsts.USERINFO))
                     {
-                        UserService userService = (UserService)context.HttpContext.RequestServices.GetService(typeof(UserService));
-                        User user = userService.Get(sid).Result;
-
                         _cacheService.Add(sid + "-" + SysConsts.USERINFO, user);
                     }
-
 
                     if (!_cacheService.Exists(SysConsts.MENUALLLIST))
                     {
@@ -55,21 +55,17 @@ namespace BYSCORE.UI
                         SetMenu(menus);
                     }
 
+                    // 当前登录用户角色拥有权限
+                    if (!_cacheService.Exists(user.Role.Code + "-" + SysConsts.RoleMENUALL))
+                    {
+                        List<Menu> menus = _roleService.GetRoleMenus(user.Role.Code).Result;
+
+                        _cacheService.Add(user.Role.Code + "-" + SysConsts.RoleMENUALL, menus);
+                    }
+
                     if (!_cacheService.Exists(sid + "-" + SysConsts.USERMENUALL))
                     {
                         List<Menu> userMenulist = _userService.GetUserMenus(sid).Result;
-                        if (userMenulist == null && userMenulist.Count == 0)
-                        {
-                            context.Result = new ContentResult() { Content = "抱歉，您没有权限！" };
-                        }
-                        string controller = context.RouteData.Values["Controller"].ToString();
-                        string action = context.RouteData.Values["Action"].ToString();
-                        string url = ("/" + controller + "/" + action).ToLower();
-                        if (!userMenulist.Any(t => t.Url.Contains(url)))
-                        {
-                            context.Result = new ContentResult() { Content = "抱歉，您没有权限！" };
-                        }
-
 
                         SetUserAllMenu(userMenulist, sid);
                         SetUserMenu(userMenulist, sid);
@@ -78,8 +74,7 @@ namespace BYSCORE.UI
                 }
                 catch (Exception ex)
                 {
-                    LogService logService = (LogService)context.HttpContext.RequestServices.GetService(typeof(LogService));
-                    logService.Error("系统错误！", ex);
+                    nlog.Error(ex, "鉴权出错！");
                     context.Result = new ContentResult() { Content = "系统错误，请联系管理员 ！" };
                 }
 

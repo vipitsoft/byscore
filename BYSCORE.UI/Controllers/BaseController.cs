@@ -41,7 +41,8 @@ namespace BYSCORE.UI.Controllers
             string action = context.RouteData.Values["Action"].ToString();
             string url = ("/" + controller + "/" + action).ToLower();
             List<Menu> usermenuAllList = _cacheService.Get<List<Menu>>(user.Code + "-" + SysConsts.USERMENUALL);
-            if (!usermenuAllList.Any(t => t.Url.Contains(url)))
+            List<Menu> roleMenuList = _cacheService.Get<List<Menu>>(user.Role.Code + "-" + SysConsts.RoleMENUALL);
+            if (!usermenuAllList.Any(t => t.Url.Contains(url)) && !roleMenuList.Any(t => t.Url.Contains(url)))
             {
                 context.Result = new ContentResult() { Content = "抱歉，您没有权限！" };
             }

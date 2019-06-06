@@ -31,6 +31,11 @@ namespace BYSCORE.UI
         public const string USERMENUALL = "UserMenuAll";
 
         /// <summary>
+        /// 角色所有菜单
+        /// </summary>
+        public const string RoleMENUALL = "RoleMenuAll";
+
+        /// <summary>
         /// 用户菜单list
         /// </summary>
         public const string USERMENULIST = "UserMenuList";
