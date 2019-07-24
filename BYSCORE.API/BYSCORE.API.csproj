@@ -9,6 +9,7 @@
     <Folder Include="wwwroot\" />
     <Folder Include="Controllers\" />
     <Folder Include="Common\" />
+    <Folder Include="Filter\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -25,6 +25,7 @@
     <Folder Include="wwwroot\images\" />
     <Folder Include="Models\Excel\" />
     <Folder Include="Filter\" />
+    <Folder Include="wwwroot\ts\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BYSCORE.Entity\BYSCORE.Entity.csproj" />
@@ -44,5 +45,9 @@
     <Content Remove="Views\ConfigInfo\ResumeStatusManage.cshtml" />
     <Content Remove="Views\ConfigInfo\AreaManage.cshtml" />
     <Content Remove="Views\Sys\UserAdd.cshtml" />
+    <Content Remove="wwwroot\ts\test.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\ts\test.ts" />
   </ItemGroup>
 </Project>
