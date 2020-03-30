@@ -82,65 +82,60 @@
     <script src="~/lib/confirm/confirm.js"></script>
     <script src="~/js/site.js"></script>
     <script>
-              //Date picker
+    //Date picker
     $('#datepicker').datepicker({
         autoclose: true,
         format: 'yyyy-mm-dd'
     })
-     function applogFormatter(value, row, index) {//赋予的参数
-            return [
-                '<a class="btn" href="/applog/applogdetail?id='+row.id+'">详情</a>'
-            ].join('');
-        }
+    function applogFormatter(value, row, index) {//赋予的参数
+        return [
+            '<a class="btn" target="_blank" href="/applog/applogdetail?id=' + row.id + '">详情</a>'
+        ].join('');
+    }
 
-        function levelFormatter(value, row, index) {//赋予的参数
-            if(value == "Info")
-            {
-                return "<small class='label bg-blue'>"+value+"</small>";
-            }else if(value == "Debug"){
-                return "<small class='label bg-green'>"+value+"</small>";
-            }else if(value == "Error"){
-                return "<small class='label bg-red'>"+value+"</small>";
-            }
+    function levelFormatter(value, row, index) {//赋予的参数
+        if (value == "Info") {
+            return "<small class='label bg-blue'>" + value + "</small>";
+        } else if (value == "Debug") {
+            return "<small class='label bg-green'>" + value + "</small>";
+        } else if (value == "Error") {
+            return "<small class='label bg-red'>" + value + "</small>";
         }
-$(function () {
-     //1.初始化Table
-     var dataconfig = {
-         tableid:"#ArbetTable", //table的Id
-         url: "/applog/GetAppLogList", //获取列表的url
-         columns: [
-            {checkbox: true},
-            {
-                field: 'id',
-                title: '序号'
-            },  {
-                field: 'level',
-                title: '级别',
-                formatter: levelFormatter
-            }, {
-                field: 'logged',
-                title: '日期',
-                formatter: dateFormatter //自定义方法，格式化日期
-            },
-            {
-                field: 'message',
-                title: '消息'
-            },
-            {
-                field: 'exception',
-                title: '异常信息',
-                width: 200
-            },
-            {
-                field: 'operate',
-                title: '操作',
-                formatter: applogFormatter //自定义方法，添加操作按钮
-            },
+    }
+    $(function () {
+        //1.初始化Table
+        var dataconfig = {
+            tableid: "#ArbetTable", //table的Id
+            url: "/applog/GetAppLogList", //获取列表的url
+            columns: [
+                { checkbox: true },
+                {
+                    field: 'id',
+                    title: '序号'
+                }, {
+                    field: 'level',
+                    title: '级别',
+                    formatter: levelFormatter
+                }, {
+                    field: 'logged',
+                    title: '日期',
+                    formatter: dateFormatter //自定义方法，格式化日期
+                },
+                {
+                    field: 'message',
+                    title: '消息',
+                    width: 200
+                },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    formatter: applogFormatter //自定义方法，添加操作按钮
+                },
             ]
-     };
-     var oTable = new TableInit(dataconfig);
-     oTable.Init();
- });
+        };
+        var oTable = new TableInit(dataconfig);
+        oTable.Init();
+    });
 
     </script>
 }

@@ -16,6 +16,8 @@ namespace BYSCORE.API
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
+
+            NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

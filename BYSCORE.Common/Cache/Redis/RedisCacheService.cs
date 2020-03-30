@@ -1,34 +1,27 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
+using System.Text;
+using Microsoft.Extensions.Caching.Redis;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
-namespace BYSCORE.Common
+namespace BYSCORE.Common.Cache.Redis
 {
-    public class MemoryCacheService : ICacheService
+    public class RedisCacheService : ICacheService
     {
-        protected IMemoryCache _cache;
+        protected IDatabase _cache;
 
-        public MemoryCacheService(IMemoryCache cache)
-        {
-            _cache = cache;
-        }
+        private ConnectionMultiplexer _connection;
 
-        public List<string> GetCacheKeys()
+        private readonly string _instance;
+
+
+        public RedisCacheService(RedisCacheOptions options, int database = 0)
         {
-            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var entries = _cache.GetType().GetField("_entries", flags).GetValue(_cache);
-            var cacheItems = entries as IDictionary;
-            var keys = new List<string>();
-            if (cacheItems == null) return keys;
-            foreach (DictionaryEntry cacheItem in cacheItems)
-            {
-                keys.Add(cacheItem.Key.ToString());
-            }
-            return keys;
+            _connection = ConnectionMultiplexer.Connect(options.Configuration);
+            _cache = _connection.GetDatabase(database);
+            _instance = options.InstanceName;
         }
 
         /// <summary>
@@ -42,9 +35,9 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            object cached;
-            return _cache.TryGetValue(key, out cached);
+            return _cache.KeyExists(GetKeyForRedis(key));
         }
+
 
         /// <summary>
         /// 添加缓存
@@ -58,19 +51,14 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-            _cache.Set(key, value);
-            return Exists(key);
+            return _cache.StringSet(GetKeyForRedis(key), Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)));
         }
         /// <summary>
         /// 添加缓存
         /// </summary>
         /// <param name="key">缓存Key</param>
         /// <param name="value">缓存Value</param>
-        /// <param name="expiresSliding">滑动过期时长（如果在过期时间内有操作，则以当前时间点延长过期时间）</param>
+        /// <param name="expiresSliding">滑动过期时长（如果在过期时间内有操作，则以当前时间点延长过期时间,Redis中无效）</param>
         /// <param name="expiressAbsoulte">绝对过期时长</param>
         /// <returns></returns>
         public bool Add(string key, object value, TimeSpan expiresSliding, TimeSpan expiressAbsoulte)
@@ -79,17 +67,7 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-            _cache.Set(key, value,
-                    new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(expiresSliding)
-                    .SetAbsoluteExpiration(expiressAbsoulte)
-                    );
-
-            return Exists(key);
+            return _cache.StringSet(GetKeyForRedis(key), Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)), expiressAbsoulte);
         }
         /// <summary>
         /// 添加缓存
@@ -97,7 +75,7 @@ namespace BYSCORE.Common
         /// <param name="key">缓存Key</param>
         /// <param name="value">缓存Value</param>
         /// <param name="expiresIn">缓存时长</param>
-        /// <param name="isSliding">是否滑动过期（如果在过期时间内有操作，则以当前时间点延长过期时间）</param>
+        /// <param name="isSliding">是否滑动过期（如果在过期时间内有操作，则以当前时间点延长过期时间,Redis中无效）</param>
         /// <returns></returns>
         public bool Add(string key, object value, TimeSpan expiresIn, bool isSliding = false)
         {
@@ -105,22 +83,9 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-            if (isSliding)
-                _cache.Set(key, value,
-                    new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(expiresIn)
-                    );
-            else
-                _cache.Set(key, value,
-                new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(expiresIn)
-                );
 
-            return Exists(key);
+
+            return _cache.StringSet(GetKeyForRedis(key), Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)), expiresIn);
         }
 
         /// <summary>
@@ -134,9 +99,7 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            _cache.Remove(key);
-
-            return !Exists(key);
+            return _cache.KeyDelete(GetKeyForRedis(key));
         }
         /// <summary>
         /// 批量删除缓存
@@ -150,8 +113,18 @@ namespace BYSCORE.Common
                 throw new ArgumentNullException(nameof(keys));
             }
 
-            keys.ToList().ForEach(item => _cache.Remove(item));
+            keys.ToList().ForEach(item => Remove(item));
         }
+
+        /// <summary>
+        /// 获取所有缓存key
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetCacheKeys()
+        {
+            return null;
+        }
+
 
         /// <summary>
         /// 获取缓存
@@ -164,8 +137,17 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            return _cache.Get(key) as T;
+
+            var value = _cache.StringGet(GetKeyForRedis(key));
+
+            if (!value.HasValue)
+            {
+                return default(T);
+            }
+
+            return JsonConvert.DeserializeObject<T>(value);
         }
+
         /// <summary>
         /// 获取缓存
         /// </summary>
@@ -177,7 +159,14 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            return _cache.Get(key);
+
+            var value = _cache.StringGet(GetKeyForRedis(key));
+
+            if (!value.HasValue)
+            {
+                return null;
+            }
+            return JsonConvert.DeserializeObject(value);
         }
         /// <summary>
         /// 获取缓存集合
@@ -190,13 +179,14 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(keys));
             }
-
             var dict = new Dictionary<string, object>();
 
-            keys.ToList().ForEach(item => dict.Add(item, _cache.Get(item)));
+            keys.ToList().ForEach(item => dict.Add(item, Get(GetKeyForRedis(item))));
 
             return dict;
         }
+
+
 
         /// <summary>
         /// 修改缓存
@@ -210,12 +200,10 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+
             if (Exists(key))
-                if (!Remove(key)) return false;
+                if (!Remove(key))
+                    return false;
 
             return Add(key, value);
 
@@ -234,12 +222,10 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+
             if (Exists(key))
-                if (!Remove(key)) return false;
+                if (!Remove(key))
+                    return false;
 
             return Add(key, value, expiresSliding, expiressAbsoulte);
         }
@@ -257,20 +243,23 @@ namespace BYSCORE.Common
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+
             if (Exists(key))
                 if (!Remove(key)) return false;
 
             return Add(key, value, expiresIn, isSliding);
         }
 
+        //这里我们写了个方法，来组合Key值和实例名，就是Key值转为 实例名+Key
+        public string GetKeyForRedis(string key)
+        {
+            return _instance + key;
+        }
+
         public void Dispose()
         {
-            if (_cache != null)
-                _cache.Dispose();
+            if (_connection != null)
+                _connection.Dispose();
             GC.SuppressFinalize(this);
         }
 

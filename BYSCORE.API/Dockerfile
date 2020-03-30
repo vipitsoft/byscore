@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.2-sdk
+FROM microsoft/dotnet:3.0-sdk
 WORKDIR /app
 COPY . /app
 EXPOSE 9999

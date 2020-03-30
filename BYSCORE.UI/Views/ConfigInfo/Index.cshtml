@@ -51,7 +51,7 @@
                                         </div>
                                     </div>
                                     <form class="form-horizontal" style="display:none;" id="departmentForm">
-                                        <input type="hidden" id="Type" name="Type" value="0" />
+                                        <input type="hidden" id="Type" name="Type" value="1" />
                                         <input type="hidden" id="CreatedTime" name="CreatedTime" value="" />
                                         <input type="hidden" id="Id" name="Id" />
                                         <input type="hidden" id="Code" name="Code" />
@@ -65,17 +65,7 @@
                                             <div class="form-group">
                                                 <label class="col-sm-2 control-label" for="inputPassword3">父级</label>
                                                 <div class="col-sm-10">
-                                                    <select class="form-control" id="ParentId" name="ParentId">
-                                                        <option value="0">顶级部门</option>
-                                                        @{
-                                                            List<ConfigInfo> configInfos = ViewBag.Depts;
-                                                            foreach (var item in configInfos)
-                                                            {
-                                                                <option value="@item.Id">@item.Name</option>
-                                                            }
-                                                        }
-
-                                                    </select>
+                                                    <DepartmentSelect class="form-control" id="ParentId" name="ParentId" default-value=0 default-name="顶级部门"></DepartmentSelect>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -123,141 +113,136 @@
     <script src="~/js/toastrconfig.js"></script>
     <script src="~/lib/confirm/confirm.js"></script>
     <script src="~/js/site.js"></script>
-    <script>
-        $(function(){
+    <script>$(function () {
             GetDepts();
             DeptFromValidator();
         })
-        // 部门管理==============================
-function GetDepts(){
-      $.ajax({
-            type: "Post",
-            url: "/configinfo/GetDepartments",
-            dataType: "json",
-            success: function (result) {
-                if(result.isGet == false){
-                    alert(result.msg);
-                    return;
-                }
-                $('#departmenttree').treeview({
-                    data: result.data,         // 数据源
-                    levels: 2,
-                    showCheckbox: false,   //是否显示复选框
-                    highlightSelected: true,    //是否高亮选中
-                    //nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标
-                    //nodeIcon: 'glyphicon glyphicon-globe',
-                    emptyIcon: '',    //没有子节点的节点图标
-                    multiSelect: false,    //多选
-                    showTags: true,
-                    onNodeChecked: function (event,data) {
-                        //alert(data);
-                    },
-                    onNodeSelected: function (event, data) {
-                         $.ajax({
-                            type: "get",
-                            url: "/configinfo/GetByCode",
-                            data: { "code": data.code },
-                            dataType: "json",
-                            success: function (result) {
-                               if(result.isGet == false)
-                                {
-                                    alert(result.msg);
-                                    return;
-                                }
-                                //console.log(data);
-                                var data = result.data;
-                                 $("#departmentForm").css("display", "");
-                                $("#Id").val(data.id);
-                                $("#Code").val(data.code);
-                                $("#Name").val(data.name);
-                                $("#Remarks").val(data.remarks);
-                                $("#Type").val(data.type);
-                                $("#CreatedTime").val(data.createdTime);
-                                $("#ParentId").find("option").each(function(index){
-                                    if($(this).val() == data.parentId){
-                                        $("#ParentId option:eq("+index+")").prop("selected",true);
-                                    }
-
-                                    if($(this).val() == data.id){
-                                        $("#ParentId option:eq("+index+")").prop("disabled","disabled");
-                                    }else{
-                                        $("#ParentId option:eq("+index+")").prop("disabled","");
-                                    }
-                                });
-                                // 删除部门下拉中当前部门
-                                //$("#ParentId option[value="+data.id+"]").remove();
-                                $("#btnDeptAdd").css("display", "none");
-                                $("#btnDeptEdit").css("display", "");
-                                $("#btnDelDept").removeAttr("disabled");
-                            },
-                        error: function (e) {
-                        alert(e.responseText);
-                        },
-                            complete: function () {
-
-                            }
-
-                        });
-
+        function GetDepts() {
+            $.ajax({
+                type: "Post",
+                url: "/configinfo/GetDepartments",
+                dataType: "json",
+                success: function (result) {
+                    if (result.isGet == false) {
+                        alert(result.msg);
+                        return;
                     }
-                });
-            },
-            error: function () {
-                alert("树形结构加载失败！")
-            }
-        });
-}
-$(function(){
-    // 新增按钮事件
- $("#btnAddDepartment").click(function(){
-           $("#departmentForm").css("display","");
-            // 初始化文本域
-            DeptClearVal();
-        });
+                    $('#departmenttree').treeview({
+                        data: result.data,         // 数据源
+                        levels: 2,
+                        showCheckbox: false,   //是否显示复选框
+                        highlightSelected: true,    //是否高亮选中
+                        //nodeIcon: 'glyphicon glyphicon-user',    //节点上的图标
+                        //nodeIcon: 'glyphicon glyphicon-globe',
+                        emptyIcon: '',    //没有子节点的节点图标
+                        multiSelect: false,    //多选
+                        showTags: true,
+                        onNodeChecked: function (event, data) {
+                            //alert(data);
+                        },
+                        onNodeSelected: function (event, data) {
+                            $.ajax({
+                                type: "get",
+                                url: "/configinfo/GetByCode",
+                                data: { "code": data.code },
+                                dataType: "json",
+                                success: function (result) {
+                                    if (result.isGet == false) {
+                                        alert(result.msg);
+                                        return;
+                                    }
+                                    //console.log(data);
+                                    var data = result.data;
+                                    $("#departmentForm").css("display", "");
+                                    $("#Id").val(data.id);
+                                    $("#Code").val(data.code);
+                                    $("#Name").val(data.name);
+                                    $("#Remarks").val(data.remarks);
+                                    $("#Type").val(data.type);
+                                    $("#CreatedTime").val(data.createdTime);
+                                    $("#ParentId").find("option").each(function (index) {
+                                        if ($(this).val() == data.parentId) {
+                                            $("#ParentId option:eq(" + index + ")").prop("selected", true);
+                                        }
 
-        // 取消按钮
-        $("#btnDeptCancel").click(function(){
-         $("#departmentForm").css("display","none");
-            // 初始化文本域
-            DeptClearVal();
-        });
+                                        if ($(this).val() == data.id) {
+                                            $("#ParentId option:eq(" + index + ")").prop("disabled", "disabled");
+                                        } else {
+                                            $("#ParentId option:eq(" + index + ")").prop("disabled", "");
+                                        }
+                                    });
+                                    // 删除部门下拉中当前部门
+                                    //$("#ParentId option[value="+data.id+"]").remove();
+                                    $("#btnDeptAdd").css("display", "none");
+                                    $("#btnDeptEdit").css("display", "");
+                                    $("#btnDelDept").removeAttr("disabled");
+                                },
+                                error: function (e) {
+                                    alert(e.responseText);
+                                },
+                                complete: function () {
 
-            $("#btnDeptAdd").on("click", function(){
-            var opt = {
+                                }
+
+                            });
+
+                        }
+                    });
+                },
+                error: function () {
+                    alert("树形结构加载失败！")
+                }
+            });
+        }
+        $(function () {
+            // 新增按钮事件
+            $("#btnAddDepartment").click(function () {
+                $("#departmentForm").css("display", "");
+                // 初始化文本域
+                DeptClearVal();
+            });
+
+            // 取消按钮
+            $("#btnDeptCancel").click(function () {
+                $("#departmentForm").css("display", "none");
+                // 初始化文本域
+                DeptClearVal();
+            });
+
+            $("#btnDeptAdd").on("click", function () {
+                var opt = {
                     type: "POST",
                     dataType: "json",
                     url: "/configinfo/ConfigInfoAdd",
                     success: function (data) {
                         if (data.isAdd == true) {
                             toastr.success("保存成功！");
-                            setTimeout(function(){ window.location.reload(); }, 3000);
+                            setTimeout(function () { window.location.reload(); }, 3000);
                         }
-                        else
-                        {
+                        else {
                             toastr.error("保存失败！");
                             $("#btnDeptAdd").removeAttr("disabled");
                         }
                     },
-                     error: function (e) {
+                    error: function (e) {
                         alert(e.responseText);
                         $("#btnDeptAdd").removeAttr("disabled");
-                        }
-                    };
-                 $("#departmentForm").ajaxForm(opt);
+                    }
+                };
+                $("#departmentForm").ajaxForm(opt);
             });
 
-        $("#btnDeptEdit").on("click", function(){
-            var opt = {
+            $("#btnDeptEdit").on("click", function () {
+                var opt = {
                     type: "POST",
                     dataType: "json",
                     url: "/configinfo/ConfigInfoEdit",
                     success: function (data) {
                         if (data.isEdit == true) {
                             toastr.success("保存成功！");
-                            setTimeout(function(){ window.location.reload(); }, 3000);
+                            setTimeout(function () { window.location.reload(); }, 3000);
                         }
-                        else
-                        {
+                        else {
                             toastr.error("保存失败！");
                             $("#btnDeptEdit").removeAttr("disabled");
                         }
@@ -265,19 +250,19 @@ $(function(){
                     error: function (e) {
                         alert(e.responseText);
                         $("#btnDeptEdit").removeAttr("disabled");
-                        }
-                    };
-                 $("#departmentForm").ajaxForm(opt);
+                    }
+                };
+                $("#departmentForm").ajaxForm(opt);
             })
-});
- function DeptFromValidator(){
-         $('#departmentForm').bootstrapValidator({
-            message: 'This value is not valid',
-                 feedbackIcons: {
-                            valid: 'glyphicon glyphicon-ok',
-                            invalid: 'glyphicon glyphicon-remove',
-                            validating: 'glyphicon glyphicon-refresh'
-                           },
+        });
+        function DeptFromValidator() {
+            $('#departmentForm').bootstrapValidator({
+                message: 'This value is not valid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
                 fields: {
                     Name: {
                         message: '部门名称验证失败！',
@@ -289,53 +274,50 @@ $(function(){
                     }
                 }
             });
-    }
-    // 部门表单重置
-    function DeptClearVal(){
-        $("#ParentId option:eq(0)").prop("selected",true);
-        $("#Id").val("");
-        $("#CreatedTime").val("");
-        $("#Code").val("");
-        $("#Name").val("");
-        $("#Remarks").val("");
+        }
+        // 部门表单重置
+        function DeptClearVal() {
+            $("#ParentId option:eq(0)").prop("selected", true);
+            $("#Id").val("");
+            $("#CreatedTime").val("");
+            $("#Code").val("");
+            $("#Name").val("");
+            $("#Remarks").val("");
 
-        $("#btnDelDept").attr("disabled","disabled");
-        $("#btnDeptAdd").css("display", "");
-        $("#btnDeptEdit").css("display", "none");
-    }
+            $("#btnDelDept").attr("disabled", "disabled");
+            $("#btnDeptAdd").css("display", "");
+            $("#btnDeptEdit").css("display", "none");
+        }
 
-            function DelDept() {
-                Ewin.confirm({ message: "确认要删除选择的数据吗？" }).on(function (e) {
-                        if (!e) {
-                            return;
+        function DelDept() {
+            Ewin.confirm({ message: "确认要删除选择的数据吗？" }).on(function (e) {
+                if (!e) {
+                    return;
+                }
+                var code = $("#Code").val();
+                var type = $("#Type").val();
+                $.ajax({
+                    type: "get",
+                    url: "/configinfo/ConfigInfoDel",
+                    data: { "code": code, "type": type },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.isDel == true) {
+                            toastr.success('删除成功！');
+                            setTimeout(function () { window.location.reload(); }, 3000);
+                        } else {
+                            toastr.error('删除失败！');
                         }
-                        var code = $("#Code").val();
-                        var type = $("#Type").val();
-                        $.ajax({
-                            type: "get",
-                            url: "/configinfo/ConfigInfoDel",
-                            data: { "code": code, "type":type },
-                            dataType: "json",
-                            success: function (data) {
-                                if (data.isDel == true) {
-                                    toastr.success('删除成功！');
-                                    setTimeout(function(){ window.location.reload(); }, 3000);
-                                }else{
-                                    toastr.error('删除失败！');
-                                }
-                            },
+                    },
 
-                        error: function (e) {
+                    error: function (e) {
                         alert(e.responseText);
-                        },
-                            complete: function () {
+                    },
+                    complete: function () {
 
-                            }
+                    }
 
-                        });
-                    });
-            }
-
-// 部门管理===================
-    </script>
+                });
+            });
+        }</script>
 }

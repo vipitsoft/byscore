@@ -5,7 +5,7 @@ namespace BYSCORE.UI
 {
     public static class DIServiceRegister
     {
-        public static void DIRegister(IServiceCollection services)
+        public static void DIRegisterService(this IServiceCollection services)
         {
             services.AddTransient<LogService>();
             services.AddTransient<AppLogService>();

@@ -1,15 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Custom' ">
+    <StartAction>Project</StartAction>
+    <ApplicationURL>http://localhost:5002</ApplicationURL>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
-    <PackageReference Include="DotNetCore.NPOI" Version="1.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.App">
+      <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
+      <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
+    <PackageReference Include="System.Net.Http.Formatting.Extension" Version="5.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +35,9 @@
     <Folder Include="Models\Excel\" />
     <Folder Include="Filter\" />
     <Folder Include="wwwroot\ts\" />
+    <Folder Include="nlog\" />
+    <Folder Include="TagHelpers\" />
+    <Folder Include="Common\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BYSCORE.Entity\BYSCORE.Entity.csproj" />
@@ -37,15 +49,6 @@
     <None Update="Dockerfile">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Views\ConfigInfo\JobTypeManage.cshtml" />
-    <Content Remove="Views\ConfigInfo\ResumeSource.cshtml" />
-    <Content Remove="Views\ConfigInfo\Index.cshtml" />
-    <Content Remove="Views\ConfigInfo\ResumeStatusManage.cshtml" />
-    <Content Remove="Views\ConfigInfo\AreaManage.cshtml" />
-    <Content Remove="Views\Sys\UserAdd.cshtml" />
-    <Content Remove="wwwroot\ts\test.ts" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="wwwroot\ts\test.ts" />

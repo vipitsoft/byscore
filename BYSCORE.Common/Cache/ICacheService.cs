@@ -7,6 +7,12 @@ namespace BYSCORE.Common
     public interface ICacheService
     {
         /// <summary>
+        /// 获取所有key
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetCacheKeys();
+
+        /// <summary>
         /// 验证缓存项是否存在
         /// </summary>
         /// <param name="key">缓存Key</param>

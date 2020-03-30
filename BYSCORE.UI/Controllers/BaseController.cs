@@ -44,7 +44,7 @@ namespace BYSCORE.UI.Controllers
             List<Menu> roleMenuList = _cacheService.Get<List<Menu>>(user.Role.Code + "-" + SysConsts.RoleMENUALL);
             if (!usermenuAllList.Any(t => t.Url.Contains(url)) && !roleMenuList.Any(t => t.Url.Contains(url)))
             {
-                context.Result = new ContentResult() { Content = "抱歉，您没有权限！" };
+                context.Result = new ContentResult() { Content = string.Format("抱歉，您没有{0}的权限！", url) };
             }
 
 

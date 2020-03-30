@@ -156,7 +156,7 @@ namespace BYSCORE.Dao.Dao
         public User UserLogin(User user)
         {
 
-            User model = _coreDbContext.User.Include(t => t.UserMenus).Include(t => t.Role).Include(t => t.Department).Include(t => t.Area)
+            User model = _coreDbContext.User.Include(t => t.Role).Include(t => t.Department).Include(t => t.Area)
             .Where(w =>
                               w.IsDelete == false
                               && (

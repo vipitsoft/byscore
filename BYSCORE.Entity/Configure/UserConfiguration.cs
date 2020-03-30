@@ -16,8 +16,8 @@ namespace BYSCORE.Entity
             builder.Property(t => t.CreatedTime);
             builder.Property(t => t.Email);
             builder.Property(t => t.HeadImg);
-            builder.Property(t => t.IsDelete).HasColumnType("bit");
-            builder.Property(t => t.IsFreeze).HasColumnType("bit");
+            builder.Property(t => t.IsDelete).HasColumnType("tinyint(1)");
+            builder.Property(t => t.IsFreeze).HasColumnType("tinyint(1)");
             builder.Property(t => t.LastLoginTime);
             builder.Property(t => t.Phone);
             builder.Property(t => t.UserName);

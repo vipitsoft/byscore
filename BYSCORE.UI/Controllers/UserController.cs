@@ -31,7 +31,6 @@ namespace BYSCORE.UI.Controllers
         [AllowAnonymous, HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            nlog.Debug("进入登录");
             TempData["returnUrl"] = returnUrl;
             return View();
         }
@@ -40,6 +39,7 @@ namespace BYSCORE.UI.Controllers
         public async Task<IActionResult> Login(User user)
         {
             ViewBag.UserName = user.UserName;
+
             var userver = UserVerify.LoginVerify(user);
             if (!userver.Item2)
             {
@@ -61,6 +61,7 @@ namespace BYSCORE.UI.Controllers
                 ViewBag.Errormessage = "该账号已冻结，禁止登录！";
                 return View();
             }
+
             //用户标识
             var identity = new ClaimsPrincipal(
                 new ClaimsIdentity(new[] {
@@ -73,13 +74,14 @@ namespace BYSCORE.UI.Controllers
 
             }, CookieAuthenticationDefaults.AuthenticationScheme)
             );
+
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity),
                 new AuthenticationProperties
                 {
                     IsPersistent = true,
-                    ExpiresUtc = DateTime.Now.AddMinutes(20)
+                    ExpiresUtc = DateTime.Now.AddMinutes(60)
                 }
             );
 

@@ -102,7 +102,10 @@ namespace BYSCORE.UI.Controllers
                 role.MenuIds = Tools.GetIntIds(MenuIds).ToList();
                 _logService.Debug(string.Format("添加角色参数！role = 【{0}】", role.ToJSON()));
                 var ret = await _roleService.Add(role);
-
+                if (ret)
+                {
+                    RefreshCache();
+                }
                 return Json(new { isadd = ret });
             }
             catch (Exception ex)
@@ -126,7 +129,10 @@ namespace BYSCORE.UI.Controllers
             {
                 role.MenuIds = Tools.GetIntIds(MenuIds).ToList();
                 var ret = await _roleService.Update(role);
-
+                if (ret)
+                {
+                    RefreshCache();
+                }
                 return Json(new { isedit = ret });
             }
             catch (Exception ex)
@@ -141,7 +147,10 @@ namespace BYSCORE.UI.Controllers
             try
             {
                 var ret = await _roleService.Delete(code);
-
+                if (ret)
+                {
+                    RefreshCache();
+                }
                 return Json(new { isdel = ret });
             }
             catch (Exception ex)
@@ -490,7 +499,10 @@ namespace BYSCORE.UI.Controllers
             try
             {
                 var ret = await _userService.Delete(code);
-
+                if (ret)
+                {
+                    RefreshCache();
+                }
                 return Json(new { isdel = ret });
             }
             catch (Exception ex)
@@ -613,18 +625,7 @@ namespace BYSCORE.UI.Controllers
         /// </summary>
         private void RefreshCache()
         {
-            var claimIdentity = (ClaimsIdentity)User.Identity;
-            string userCode = claimIdentity.Claims.FirstOrDefault(w => w.Type == ClaimTypes.Sid).Value;
-
-            IEnumerable<string> keys = new List<string>
-            {
-                SysConsts.MENUALLLIST,
-                SysConsts.MENULIST,
-                userCode+"-"+SysConsts.USERMENULIST,
-                userCode+"-"+SysConsts.USERMENUALL,
-                userCode+"-"+SysConsts.USERDATALIST,
-                userCode+"-"+SysConsts.USERBUTTONLIST
-            };
+            IEnumerable<string> keys = _cacheService.GetCacheKeys();
 
             _cacheService.RemoveAll(keys);
         }
@@ -645,7 +646,6 @@ namespace BYSCORE.UI.Controllers
                 {
                     User model = await _userService.Get(user.Code);
                     _cacheService.Replace(model.Code + "-" + SysConsts.USERINFO, model);
-                    RefreshCache();
                 }
                 return Json(new { isedit = ret });
             }

@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace BYSCORE.UI
 {

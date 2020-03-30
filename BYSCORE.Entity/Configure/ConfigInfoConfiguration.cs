@@ -16,7 +16,7 @@ namespace BYSCORE.Entity
             builder.Property(t => t.Code);
             builder.Property(t => t.Name);
             builder.Property(t => t.CreatedTime);
-            builder.Property(t => t.IsDelete).HasColumnType("bit");
+            builder.Property(t => t.IsDelete).HasColumnType("tinyint(1)");
             builder.Property(t => t.ParentId);
             builder.Property(t => t.Remarks);
 

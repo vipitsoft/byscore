@@ -52,17 +52,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="">角色</label>
-                                <select class="form-control" id="RoleId" name="RoleId" onchange="GetRoleMenus()">
-                                    @{
-                                        List<Role> roles = ViewBag.Roles as List<Role>;
-                                        foreach (var item in roles)
-                                        {
-                                            <option value="@item.Id">
-                                                @item.CName
-                                            </option>
-                                        }
-                                    }
-                                </select>
+                                <RoleSelect class="form-control" id="RoleId" name="RoleId" onchange="GetRoleMenus()" default-value=0></RoleSelect>
                             </div>
                             <div class="form-group">
                                 <label for="Name">员工姓名</label>
@@ -90,27 +80,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="">部门</label>
-                                <select class="form-control" id="DepartmentId" name="DepartmentId">
-                                    @{
-                                        List<ConfigInfo> departments = ViewBag.Departments as List<ConfigInfo>;
-                                        foreach (var item in departments)
-                                        {
-                                            <option value="@item.Id">@item.Name</option>
-                                        }
-                                    }
-                                </select>
+                                <DepartmentSelect class="form-control" id="DepartmentId" name="DepartmentId" default-value=0></DepartmentSelect>
                             </div>
                             <div class="form-group">
                                 <label for="">区域</label>
-                                <select class="form-control" id="AreaId" name="AreaId">
-                                    @{
-                                        List<ConfigInfo> areas = ViewBag.Areas as List<ConfigInfo>;
-                                        foreach (var item in areas)
-                                        {
-                                            <option value="@item.Id">@item.Name</option>
-                                        }
-                                    }
-                                </select>
+                                <AreasSelect class="form-control" id="AreaId" name="AreaId" default-value=0></AreasSelect>
                             </div>
                         </div>
                         <!-- /.box-body -->

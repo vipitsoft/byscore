@@ -68,7 +68,7 @@
         <form id="AreaForm">
             <input hidden="hidden" value="" id="AreaId" name="Id" />
             <input hidden="hidden" value="" id="AreaCode" name="Code" />
-            <input hidden="hidden" value="1" id="AreaType" name="Type" />
+            <input hidden="hidden" value="2" id="AreaType" name="Type" />
             <input hidden="hidden" value="" id="AreaCreatedTime" name="CreatedTime" />
             <div class="modal-content">
                 <div class="modal-header">
@@ -110,63 +110,62 @@
     <script src="~/js/toastrconfig.js"></script>
     <script src="~/lib/confirm/confirm.js"></script>
     <script src="~/js/site.js"></script>
-    <script>
-        $(function(){
+    <script>$(function () {
             GetAreas();
             AreaFromValidator();
         });
         // 区域管理 ==========
-function GetAreas(){
-         //1.初始化Table
-         var dataconfig = {
-             tableid:"#aeralistTable", //table的Id
-             url: "/configinfo/GetAreas", //获取列表的url
-             columns: [
-                {checkbox: true},
-                {
-                    field: 'name',
-                    title: '区域'
-                },{
-                    field: 'remarks',
-                    title: '描述'
-                },
-                {
-                    field: 'operate',
-                    title: '操作',
-                    formatter: aeraFormatter //自定义方法，添加操作按钮
-                },
+        function GetAreas() {
+            //1.初始化Table
+            var dataconfig = {
+                tableid: "#aeralistTable", //table的Id
+                url: "/configinfo/GetAreas", //获取列表的url
+                columns: [
+                    { checkbox: true },
+                    {
+                        field: 'name',
+                        title: '区域'
+                    }, {
+                        field: 'remarks',
+                        title: '描述'
+                    },
+                    {
+                        field: 'operate',
+                        title: '操作',
+                        formatter: aeraFormatter //自定义方法，添加操作按钮
+                    },
                 ]
-         };
-         var oTable = new TableInit(dataconfig);
-         oTable.Init();
-}
-function aeraFormatter(value, row, index) {//赋予的参数
-                return [
-                    '<a class="btn" onclick="AreaEdit(\''+row.code+'\')" href="javascript:;"  title="编辑"><i class = "fa fa-edit"></i></a>',
-                    '<a class="btn" href="javascript:;"  onclick="AreaDel(\''+row.code+'\')"  title="删除"><i class = "fa fa-trash-o"></i></a>'
+            };
+            var oTable = new TableInit(dataconfig);
+            oTable.Init();
+        }
+        function aeraFormatter(value, row, index) {//赋予的参数
+            return [
+                '<a class="btn" onclick="AreaEdit(\'' + row.code + '\')" href="javascript:;"  title="编辑"><i class = "fa fa-edit"></i></a>',
+                '<a class="btn" href="javascript:;"  onclick="AreaDel(\'' + row.code + '\')"  title="删除"><i class = "fa fa-trash-o"></i></a>'
 
-                ].join('');
-            }
+            ].join('');
+        }
 
-$(function(){
-    $("#btnAddArea").click(function(){
-        // 初始化部门表单验证
-        $("#AreaForm").data('bootstrapValidator').destroy();
-        $('#AreaForm').data('bootstrapValidator', null);
-        AreaFromValidator();
-        $("#areaModalLabel").text("添加");
-        $('#areaModal').modal();
-        $("#AreaId").val("");
-        $("#AreaCode").val("");
-        $("#AreaName").val("");
-        $("#AreaRemarks").val("");
-        $("#AreaCreatedTime").val("");
-        $("#btn_AddArea").css("display", "");
-        $("#btn_EditArea").css("display", "none");
-    });
+        $(function () {
+            $("#btnAddArea").click(function () {
+                // 初始化部门表单验证
+                $("#AreaForm").data('bootstrapValidator').destroy();
+                $('#AreaForm').data('bootstrapValidator', null);
+                AreaFromValidator();
+                $("#areaModalLabel").text("添加");
+                $('#areaModal').modal();
+                $("#AreaId").val("");
+                $("#AreaCode").val("");
+                $("#AreaName").val("");
+                $("#AreaRemarks").val("");
+                $("#AreaCreatedTime").val("");
+                $("#btn_AddArea").css("display", "");
+                $("#btn_EditArea").css("display", "none");
+            });
 
 
-    $("#btn_AddArea").click(function(){
+            $("#btn_AddArea").click(function () {
                 var temp = $("#AreaForm").serializeJsonObject();
                 $.ajax({
                     type: "post",
@@ -174,124 +173,121 @@ $(function(){
                     data: temp,
                     dataType: "json",
                     success: function (data) {
-                             if (data.isAdd == true) {
+                        if (data.isAdd == true) {
                             toastr.success("保存成功！");
-                            setTimeout(function(){ window.location.reload(); }, 3000);
+                            setTimeout(function () { window.location.reload(); }, 3000);
                         }
-                        else
-                        {
+                        else {
                             toastr.error("保存失败！");
                             $("#btn_AddArea").removeAttr("disabled");
                         }
-                        },
-                        error: function (e) {
+                    },
+                    error: function (e) {
                         alert(e.responseText);
-                        },
+                    },
                 });
 
-    });
+            });
 
-     $("#btn_EditArea").click(function(){
-         var temp = $("#AreaForm").serializeJsonObject();
+            $("#btn_EditArea").click(function () {
+                var temp = $("#AreaForm").serializeJsonObject();
                 $.ajax({
                     type: "post",
                     url: "/configinfo/ConfigInfoEdit",
                     data: temp,
                     dataType: "json",
                     success: function (data) {
-                             if (data.isEdit == true) {
+                        if (data.isEdit == true) {
                             toastr.success("保存成功！");
-                            setTimeout(function(){ window.location.reload(); }, 3000);
+                            setTimeout(function () { window.location.reload(); }, 3000);
                         }
-                        else
-                        {
+                        else {
                             toastr.error("保存失败！");
                             $("#btn_EditArea").removeAttr("disabled");
                         }
-                        },
-                        error: function (e) {
+                    },
+                    error: function (e) {
                         alert(e.responseText);
-                        },
+                    },
                 });
-    });
-});
+            });
+        });
 
-function AreaEdit(code){
-        // 初始化部门表单验证
-        $("#AreaForm").data('bootstrapValidator').destroy();
-        $('#AreaForm').data('bootstrapValidator', null);
-        AreaFromValidator();
-        $("#areaModalLabel").text("编辑");
-        $('#areaModal').modal();
-        $.ajax({
-            type: "get",
-            url: "/configinfo/GetByCode",
-            data: { "code": code },
-            dataType: "json",
-            success: function (result) {
-            if(result.isGet == false)
-            {
-                alert(result.msg);
-                return;
-                }
-                var data = result.data;
-                $("#AreaId").val(data.id);
-                $("#AreaCode").val(data.code);
-                $("#AreaName").val(data.name);
-                $("#AreaRemarks").val(data.remarks);
-                $("#AreaType").val(data.type);
-                $("#AreaCreatedTime").val(data.createdTime);
+        function AreaEdit(code) {
+            // 初始化部门表单验证
+            $("#AreaForm").data('bootstrapValidator').destroy();
+            $('#AreaForm').data('bootstrapValidator', null);
+            AreaFromValidator();
+            $("#areaModalLabel").text("编辑");
+            $('#areaModal').modal();
+            $.ajax({
+                type: "get",
+                url: "/configinfo/GetByCode",
+                data: { "code": code },
+                dataType: "json",
+                success: function (result) {
+                    if (result.isGet == false) {
+                        alert(result.msg);
+                        return;
+                    }
+                    var data = result.data;
+                    $("#AreaId").val(data.id);
+                    $("#AreaCode").val(data.code);
+                    $("#AreaName").val(data.name);
+                    $("#AreaRemarks").val(data.remarks);
+                    $("#AreaType").val(data.type);
+                    $("#AreaCreatedTime").val(data.createdTime);
 
-                $("#btn_AddArea").css("display", "none");
-                $("#btn_EditArea").css("display", "");
+                    $("#btn_AddArea").css("display", "none");
+                    $("#btn_EditArea").css("display", "");
                 },
                 error: function (e) {
-                        alert(e.responseText);
-                        },
+                    alert(e.responseText);
+                },
 
 
-        });
-}
+            });
+        }
 
-function AreaDel(code){
-    Ewin.confirm({ message: "确认要删除选择的数据吗？" }).on(function (e) {
-                        if (!e) {
-                            return;
+        function AreaDel(code) {
+            Ewin.confirm({ message: "确认要删除选择的数据吗？" }).on(function (e) {
+                if (!e) {
+                    return;
+                }
+
+                var type = $("#AreaType").val();
+                $.ajax({
+                    type: "get",
+                    url: "/configinfo/ConfigInfoDel",
+                    data: { "code": code, "type": type },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.isDel == true) {
+                            toastr.success('删除成功！');
+                            setTimeout(function () { window.location.reload(); }, 3000);
+                        } else {
+                            toastr.error('删除失败！');
                         }
-
-                        var type = $("#AreaType").val();
-                        $.ajax({
-                            type: "get",
-                            url: "/configinfo/ConfigInfoDel",
-                            data: { "code": code, "type":type },
-                            dataType: "json",
-                            success: function (data) {
-                                if (data.isDel == true) {
-                                    toastr.success('删除成功！');
-                                    setTimeout(function(){ window.location.reload(); }, 3000);
-                                }else{
-                                    toastr.error('删除失败！');
-                                }
-                            },
-                        error: function (e) {
+                    },
+                    error: function (e) {
                         alert(e.responseText);
-                        },
-                            complete: function () {
+                    },
+                    complete: function () {
 
-                            }
+                    }
 
-                        });
-                    });
-}
+                });
+            });
+        }
 
-function AreaFromValidator(){
-         $('#AreaForm').bootstrapValidator({
-            message: 'This value is not valid',
-                 feedbackIcons: {
-                            valid: 'glyphicon glyphicon-ok',
-                            invalid: 'glyphicon glyphicon-remove',
-                            validating: 'glyphicon glyphicon-refresh'
-                           },
+        function AreaFromValidator() {
+            $('#AreaForm').bootstrapValidator({
+                message: 'This value is not valid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
                 fields: {
                     Name: {
                         message: '区域名称验证失败！',
@@ -303,8 +299,7 @@ function AreaFromValidator(){
                     }
                 }
             });
-    }
+        }
 
-// 区域管理 ==========
-    </script>
+// 区域管理 ==========</script>
 }

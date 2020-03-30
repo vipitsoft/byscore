@@ -13,7 +13,7 @@ namespace BYSCORE.Entity
             builder.HasKey(t => t.Id);
 
             builder.Property(t => t.CreatedTime);
-            builder.Property(t => t.IsDelete).HasColumnType("bit");
+            builder.Property(t => t.IsDelete).HasColumnType("tinyint(1)");
             builder.Property(t => t.Level);
             builder.Property(t => t.Code);
             builder.Property(t => t.Icon);

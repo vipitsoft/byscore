@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BYSCORE.Common;
+using BYSCORE.UI.Common.Extensions
 using BYSCORE.UI.Common.Outer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
@@ -34,13 +36,6 @@ namespace BYSCORE.UI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //services.Configure<CookiePolicyOptions>(options =>
-            //{
-            //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            //    options.CheckConsentNeeded = context => true;
-            //    options.MinimumSameSitePolicy = SameSiteMode.None;
-            //});
-
             services.AddHttpClient();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<WebApiHelper>();
@@ -50,7 +45,7 @@ namespace BYSCORE.UI
             {
                 o.LoginPath = new PathString("/user/login");
                 o.AccessDeniedPath = new PathString("/denied");
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                o.ExpireTimeSpan = TimeSpan.FromHours(8);
             })
             .AddJwtBearer(WebApiAuthroizeAttribute.AuthenticationScheme, options =>
             {
@@ -68,23 +63,26 @@ namespace BYSCORE.UI
                 };
             });
 
-            services.AddMemoryCache(); // 缓存
-            services.AddSingleton<ICacheService, MemoryCacheService>();
 
-            services.AddMvc(option => { option.Filters.Add(typeof(AuthFilter)); }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCache("localhost:32769", "db", true);
+
+            services.AddMvc(option => { option.Filters.Add(typeof(AuthFilter)); }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddControllersWithViews().AddRazorRuntimeCompilation(); // 启用运行时可刷新视图
+
             services.AddOptions();
-
+            services.AddControllersWithViews();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // service注入
-            DIServiceRegister.DIRegister(services);
+            services.DIRegisterService();
 
             services.AddDistributedMemoryCache();
             services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -99,20 +97,20 @@ namespace BYSCORE.UI
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication();
 
             app.UseSession();
 
-            // 使用NLog作为日志记录工具
-            loggerFactory.AddNLog();
-            // 引入Nlog配置文件
-            env.ConfigureNLog("NLog.config");
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions

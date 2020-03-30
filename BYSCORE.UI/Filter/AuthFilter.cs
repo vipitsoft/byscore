@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Permissions;
 using System.Threading.Tasks;
 using BYSCORE.Common;
+using BYSCORE.Common.Consts;
 using BYSCORE.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,7 @@ namespace BYSCORE.UI
             _roleService = roleService;
         }
 
+
         public void OnAuthorization(AuthorizationFilterContext context)
         {
 
@@ -42,13 +44,16 @@ namespace BYSCORE.UI
                     var claims = context.HttpContext.User.Claims;
                     // 获取用户id
                     var sid = claims.FirstOrDefault(t => t.Type == ClaimTypes.Sid).Value;
-                    User user = _userService.Get(sid).Result; ;
-                    if (!_cacheService.Exists(sid + "-" + SysConsts.USERINFO))
+                    User user = _userService.Get(sid).Result;
+
+                    string userInfoKey = $"{CacheKeyConst.SysKey}:{CacheKeyConst.UserKey}:{sid}:{ SysConsts.USERINFO}";
+                    if (!_cacheService.Exists(userInfoKey))
                     {
-                        _cacheService.Add(sid + "-" + SysConsts.USERINFO, user);
+                        _cacheService.Add(userInfoKey, user);
                     }
 
-                    if (!_cacheService.Exists(SysConsts.MENUALLLIST))
+                    string menuKey = $"{CacheKeyConst.SysKey}:{CacheKeyConst.MenuKey}:{SysConsts.MENUALLLIST}";
+                    if (!_cacheService.Exists(menuKey))
                     {
                         List<Menu> menus = _menuService.GetList().Result;
                         SetMenuList(menus); // 所有菜单
@@ -56,14 +61,16 @@ namespace BYSCORE.UI
                     }
 
                     // 当前登录用户角色拥有权限
-                    if (!_cacheService.Exists(user.Role.Code + "-" + SysConsts.RoleMENUALL))
+                    string roleKey = $"{CacheKeyConst.SysKey}:{CacheKeyConst.RoleKey}:{user.Role.Code}:{SysConsts.RoleMENUALL}";
+                    if (!_cacheService.Exists(roleKey))
                     {
                         List<Menu> menus = _roleService.GetRoleMenus(user.Role.Code).Result;
 
-                        _cacheService.Add(user.Role.Code + "-" + SysConsts.RoleMENUALL, menus);
+                        _cacheService.Add(roleKey, menus);
                     }
 
-                    if (!_cacheService.Exists(sid + "-" + SysConsts.USERMENUALL))
+                    string userMenuKey = $"{CacheKeyConst.SysKey}:{CacheKeyConst.UserKey}:{CacheKeyConst.MenuKey}:{sid}";
+                    if (!_cacheService.Exists(userMenuKey))
                     {
                         List<Menu> userMenulist = _userService.GetUserMenus(sid).Result;
 
